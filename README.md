@@ -222,6 +222,11 @@ of the same name.
 The 136,277 pages split into train (125,277), seed (4,000), validation (2,000)
 and test (5,000), each page in exactly one. Seed and test are released.
 
+The component counts above are those of the released rows, the set the probe
+scores. Table S1 of the supplement counts components before export and lists 25
+more (23 image, 1 text, 1 text-marquee): the export drops duplicate boxes and
+boxes with no area inside the screenshot.
+
 ## Evaluating the released encoders
 
 Requirements: Python 3.12 and a CUDA GPU (the reported runs used 4× NVIDIA
