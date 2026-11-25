@@ -6,15 +6,16 @@
   <meta name="description" content="Masking by Design: Component-Conditioned Pretraining for User Interfaces">
   <title>Masking by Design</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Castoro&family=Noto+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans:400,500,700|Noto+Sans:400,600,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <style>
     body { font-family: 'Noto Sans', sans-serif; background: #fff; color: #363636; }
-    .publication-title { font-family: 'Castoro', serif; }
-    .publication-subtitle { font-family: 'Castoro', serif; color: #4a4a4a; }
-    .publication-authors { font-size: 1.15rem; }
+    .publication-title { font-family: 'Google Sans', sans-serif; }
+    .publication-subtitle { font-family: 'Google Sans', sans-serif; color: #4a4a4a; }
+    .publication-authors { font-family: 'Google Sans', sans-serif; font-size: 1.15rem; }
+    .teaser { font-family: 'Google Sans', sans-serif; }
     .publication-authors .note { color: #7a7a7a; font-style: italic; }
     .author-block { display: inline-block; margin: 0 0.15rem; }
     .publication-links { margin-top: 1.25rem; }
@@ -23,7 +24,8 @@
     .button[disabled] { opacity: 0.55; }
 
     figure img { width: 100%; border-radius: 6px; }
-    .caption { font-size: 0.95rem; color: #4a4a4a; margin-top: 0.6rem; text-align: left; }
+    .caption { font-size: 0.95rem; color: #4a4a4a; margin-top: 0.6rem; text-align: justify; }
+    .section .content p, .section p.content, .section .content li { text-align: justify; }
     h2.title { font-family: 'Noto Sans', sans-serif; font-weight: 600; }
 
     .hero.is-light { background: #f5f5f5; }
@@ -38,10 +40,10 @@
     .column { min-width: 0; }
     .container { width: 100%; }
     .container.is-max-desktop { max-width: 1152px; }
-    pre { max-width: 100%; background: #f6f8fa; border-radius: 6px; font-family: 'JetBrains Mono', monospace;
+    pre { max-width: 100%; background: #f6f8fa; border-radius: 6px;
           font-size: 0.85rem; line-height: 1.45; padding: 1rem 1.1rem; white-space: pre; overflow-x: auto; }
     pre .c { color: #6a737d; }
-    code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: #f2f2f2; color: #363636; padding: 0.1em 0.35em; }
+    code { font-size: 0.88em; background: #f2f2f2; color: #363636; padding: 0.1em 0.35em; }
     pre code { background: none; padding: 0; font-size: 1em; }
 
     details { border: 1px solid #e5e5e5; border-radius: 6px; padding: 0.9rem 1.1rem; }
@@ -132,9 +134,9 @@
 <section class="section hero is-light">
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
-      <div class="column">
+      <div class="column is-four-fifths">
         <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-left">
+        <div class="content has-text-justified">
           <p>
             A web page is built from components, and recovering them from pixels underlies design tooling,
             accessibility, UI testing and software agents. Once rendered, a page holds two representations: the
@@ -166,7 +168,7 @@
 <!-- ===================== Random vs ours ===================== -->
 <section class="section">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Component-conditioned masking across pages</h2>
+    <h2 class="title is-3">Component-conditioned masking across pages</h2>
     <figure>
       <img src="static/images/random_vs_ours.jpg" alt="Six pages under random masking (top) and component-conditioned masking (bottom)">
     </figure>
@@ -181,7 +183,7 @@
 <!-- ===================== Results ===================== -->
 <section class="section pt-0">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Results</h2>
+    <h2 class="title is-3">Results</h2>
     <div class="columns">
       <div class="column is-5">
         <figure>
@@ -250,7 +252,7 @@
 <!-- ===================== Released encoders ===================== -->
 <section class="section hero is-light">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Released encoders</h2>
+    <h2 class="title is-3">Released encoders</h2>
     <div class="table-container">
       <table class="table is-fullwidth is-striped results" style="background:transparent">
         <thead>
@@ -313,7 +315,7 @@
 <!-- ===================== Using an encoder ===================== -->
 <section class="section">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Using an encoder</h2>
+    <h2 class="title is-3">Using an encoder</h2>
 <pre><code>from PIL import Image
 from transformers import AutoImageProcessor, Siglip2VisionModel
 
@@ -332,7 +334,7 @@ patch_features = model(**inputs).last_hidden_state      <span class="c"># (1, 10
 <!-- ===================== Data ===================== -->
 <section class="section hero is-light">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">The data</h2>
+    <h2 class="title is-3">The data</h2>
     <div class="columns">
       <div class="column is-5">
         <figure>
@@ -392,7 +394,7 @@ row["rectangles"]   <span class="c"># [[x_min, y_min, x_max, y_max], ...]</span>
 <!-- ===================== Reproduce ===================== -->
 <section class="section">
   <div class="container is-max-desktop content">
-    <h2 class="title is-3 has-text-centered">Evaluating the released encoders</h2>
+    <h2 class="title is-3">Evaluating the released encoders</h2>
     <p>
       Requirements: Python 3.12 and a CUDA GPU (the reported runs used 4× NVIDIA L40S). The script downloads the
       weights and evaluation dataset, runs the linear probe on all six encoders, and prints per-class F1 and test
@@ -417,7 +419,7 @@ MODELS_PER_PASS=1 BATCH_SIZE=8 WORKERS=8 \
 <!-- ===================== Limitations ===================== -->
 <section class="section hero is-light">
   <div class="container is-max-desktop content">
-    <h2 class="title is-3 has-text-centered">Limitations</h2>
+    <h2 class="title is-3">Limitations</h2>
     <ul>
       <li>The mask and the evaluation use the same twelve classes, which cover 51% of the component instances a page
         carries. Everything outside them is treated as non-component area.</li>
