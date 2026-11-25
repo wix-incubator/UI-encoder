@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Masking by Design: Component-Conditioned Pretraining for User Interfaces">
+  <title>Masking by Design</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Castoro&family=Noto+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    body { font-family: 'Noto Sans', sans-serif; background: #fff; color: #363636; }
+    .publication-title { font-family: 'Castoro', serif; }
+    .publication-subtitle { font-family: 'Castoro', serif; color: #4a4a4a; }
+    .publication-authors { font-size: 1.15rem; }
+    .publication-authors .note { color: #7a7a7a; font-style: italic; }
+    .author-block { display: inline-block; margin: 0 0.15rem; }
+    .publication-links { margin-top: 1.25rem; }
+    .link-block { display: inline-block; margin: 0.25rem; }
+    .button.is-dark { background: #363636; }
+    .button[disabled] { opacity: 0.55; }
+
+    figure img { width: 100%; border-radius: 6px; }
+    .caption { font-size: 0.95rem; color: #4a4a4a; margin-top: 0.6rem; text-align: left; }
+    h2.title { font-family: 'Castoro', serif; font-weight: 400; }
+
+    .hero.is-light { background: #f5f5f5; }
+    .highlight { font-weight: 700; }
+
+    table.results { font-size: 0.92rem; }
+    table.results td.num, table.results th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    table.results tr.total td { border-top: 2px solid #363636; font-weight: 700; }
+    table.results .best { font-weight: 700; }
+    .neg { color: #b5413a; }
+
+    .column { min-width: 0; }
+    .container { width: 100%; }
+    pre { max-width: 100%; background: #f6f8fa; border-radius: 6px; font-family: 'JetBrains Mono', monospace;
+          font-size: 0.85rem; line-height: 1.45; padding: 1rem 1.1rem; white-space: pre; overflow-x: auto; }
+    pre .c { color: #6a737d; }
+    code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: #f2f2f2; color: #363636; padding: 0.1em 0.35em; }
+    pre code { background: none; padding: 0; font-size: 1em; }
+
+    details { border: 1px solid #e5e5e5; border-radius: 6px; padding: 0.9rem 1.1rem; }
+    details summary { cursor: pointer; font-weight: 600; }
+    details[open] summary { margin-bottom: 1rem; }
+
+    .footer { background: #fafafa; padding: 2.5rem 1.5rem; }
+    .footer p { font-size: 0.85rem; color: #7a7a7a; }
+
+    @media (max-width: 768px) {
+      .section { padding: 2rem 1rem; }
+      .publication-title { font-size: 2rem !important; }
+      table.results { font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===================== Title ===================== -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop has-text-centered">
+      <h1 class="title is-1 publication-title">Masking by Design</h1>
+      <h2 class="subtitle is-3 publication-subtitle">Component-Conditioned Pretraining for User Interfaces</h2>
+
+      <div class="publication-authors">
+        <span class="author-block">Shon Otmazgin<sup>*</sup>,</span>
+        <span class="author-block">Shahar Nahum<sup>*</sup>,</span>
+        <span class="author-block">Adi Dick-Charnilas,</span>
+        <span class="author-block">Gershon Goland,</span>
+        <span class="author-block">Amit Israeli,</span>
+        <span class="author-block">Gilad Barkan</span>
+      </div>
+      <div class="publication-authors mt-1">
+        <span class="author-block">Wix.com</span>
+        <span class="note ml-3"><sup>*</sup>Equal contribution</span>
+      </div>
+
+      <div class="publication-links">
+        <span class="link-block">
+          <a class="button is-dark is-rounded" disabled title="coming soon">
+            <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span>
+          </a>
+        </span>
+        <span class="link-block">
+          <a class="button is-dark is-rounded" disabled title="coming soon">
+            <span class="icon"><i class="fas fa-scroll"></i></span><span>arXiv</span>
+          </a>
+        </span>
+        <span class="link-block">
+          <a class="button is-dark is-rounded" href="https://github.com/wix-incubator/UI-encoder">
+            <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
+          </a>
+        </span>
+        <span class="link-block">
+          <a class="button is-dark is-rounded" href="https://huggingface.co/Wix/ui-encoder-ours">
+            <span class="icon">🤗</span><span>Encoders</span>
+          </a>
+        </span>
+        <span class="link-block">
+          <a class="button is-dark is-rounded" href="https://huggingface.co/datasets/Wix/ui-components">
+            <span class="icon"><i class="fas fa-database"></i></span><span>Data</span>
+          </a>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Teaser ===================== -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body pt-0">
+      <figure>
+        <img src="static/images/method.jpg" alt="Component-conditioned masking on a real page: the screenshot, its component boxes, and the resulting patch mask">
+      </figure>
+      <p class="caption">
+        <b>Component-conditioned masking</b>, on a real page from our corpus. <b>(1)</b> Webpage: the rendered screenshot,
+        the only input the encoder receives. <b>(2)</b> DOM boxes show where each component appears, taken from the
+        page's structured document. <b>(3)</b> Our mask uses those boxes to place target patches. Gray marks the
+        targets. The visible patches provide the context for predicting them.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Abstract ===================== -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            A web page is built from components, and recovering them from pixels underlies design tooling,
+            accessibility, UI testing and software agents. Once rendered, a page holds two representations: the
+            screenshot an encoder sees, and the structured document it was drawn from, which names every component
+            and fixes its box. Prior work has read that document as context, or predicted it back as a target. We use it
+            to <b>author the pretraining mask</b>. The sampler visits components in the twelve target classes from
+            smallest to largest and aims to hide part of each while preserving visible context.
+          </p>
+          <p>
+            Our corpus is 136,277 rendered pages from Wix.com, a website-building platform where a single vocabulary
+            names every component. We continue pretraining a <b>SigLIP2</b> encoder with <b>I-JEPA</b> under this
+            policy, and measure it with a linear probe that predicts each component's class: macro F1 rises from
+            <b>61.5 to 66.0</b>. To isolate the mask we pretrain again with random masking, changing nothing else: the
+            difference is <b>1.3 macro F1</b> across three seeds (p = 0.045), and it is gained on the five classes a
+            random draw under-covers, where ours masks more than half of every class's area. Our mask improves all
+            twelve classes; the random draws leave some below the frozen SigLIP2 encoder.
+          </p>
+          <p>
+            We release the evaluation code and the mask and predictor code. The five pretrained encoders and 9,000 pages
+            (the sealed test split and the split the probe trains on, with every component's class and box) are on
+            Hugging Face.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Random vs ours ===================== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Component-conditioned masking across pages</h2>
+    <figure>
+      <img src="static/images/random_vs_ours.jpg" alt="Six pages under random masking (top) and component-conditioned masking (bottom)">
+    </figure>
+    <p class="caption">
+      <b>The same six pages under both policies.</b> <i>Top</i>: random masking is blind to the page, so components go
+      untouched on one page and vanish whole on the next. <i>Bottom</i> shows blocks placed using the component boxes
+      recorded in the page's document. Colors mark the target blocks to be predicted.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== Results ===================== -->
+<section class="section pt-0">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Results</h2>
+    <div class="columns">
+      <div class="column is-5">
+        <figure>
+          <img src="static/images/coverage_f1.png" alt="Coverage per policy and the macro F1 gain that follows it">
+        </figure>
+        <p class="caption">
+          <b>Coverage and the macro F1 gain that follows it.</b> Coverage is the share of a class's patches the mask
+          hides. Left: bars are the mean over the twelve classes, capped lines their full range. Right: the bar is the
+          mean over three pretraining seeds, the dots those seeds. Coverage on the training pages, macro F1 on the test
+          split.
+        </p>
+      </div>
+      <div class="column is-7">
+        <div class="table-container">
+          <table class="table is-narrow is-fullwidth results">
+            <thead>
+              <tr><th>class</th><th class="num">SigLIP2</th><th class="num">random</th><th class="num">random⁺</th><th class="num">ours</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>dropdown-menu</td><td class="num">53.2</td><td class="num">+10.9</td><td class="num">+11.3</td><td class="num best">+14.0</td></tr>
+              <tr><td>menu</td><td class="num">65.6</td><td class="num">+4.8</td><td class="num">+6.9</td><td class="num best">+9.1</td></tr>
+              <tr><td>header</td><td class="num">77.8</td><td class="num">+4.2</td><td class="num">+4.7</td><td class="num best">+7.5</td></tr>
+              <tr><td>vector-image</td><td class="num">53.4</td><td class="num">+1.0</td><td class="num">+1.6</td><td class="num best">+3.3</td></tr>
+              <tr><td>text</td><td class="num">82.7</td><td class="num">+2.1</td><td class="num">+2.9</td><td class="num best">+3.2</td></tr>
+              <tr><td>button</td><td class="num">78.8</td><td class="num">0.0</td><td class="num">+1.2</td><td class="num best">+2.1</td></tr>
+              <tr><td>login-social-bar</td><td class="num">62.1</td><td class="num neg">−6.7</td><td class="num neg">−4.1</td><td class="num best">+2.0</td></tr>
+              <tr><td>hamburger</td><td class="num">62.5</td><td class="num neg">−2.6</td><td class="num neg">−0.9</td><td class="num best">+1.1</td></tr>
+              <tr><td>text-marquee</td><td class="num">35.4</td><td class="num">+3.9</td><td class="num best">+6.2</td><td class="num">+5.1</td></tr>
+              <tr><td>repeater</td><td class="num">19.3</td><td class="num">+2.9</td><td class="num best">+3.4</td><td class="num">+2.5</td></tr>
+              <tr><td>image</td><td class="num">71.1</td><td class="num">+1.7</td><td class="num best">+2.7</td><td class="num">+2.3</td></tr>
+              <tr><td>input-field</td><td class="num">75.9</td><td class="num neg">−2.4</td><td class="num best">+2.0</td><td class="num">+1.7</td></tr>
+              <tr class="total"><td>macro F1</td><td class="num">61.5</td><td class="num">+1.7</td><td class="num">+3.2</td><td class="num">+4.5</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="caption">Per-class F1 on the test split, linear probe, mean over three pretraining seeds (Table 2 of
+          the paper). The SigLIP2 column is the frozen encoder's F1; each Δ is the change from it under continued
+          pretraining with that mask. Bold marks the best mask per class. Ours masks at the band (0.5, 0.7), selected on
+          the validation split. Seed standard deviation of macro F1: ours ±0.21, random⁺ ±0.51, random ±0.71; for the
+          gain over random⁺, a paired t-test across the three seeds gives p = 0.045.</p>
+      </div>
+    </div>
+    <div class="content mt-5">
+      <p>
+        <b>Where the gain comes from.</b> Coverage, the share of a class's patches the mask hides, is what separates
+        the policies. A random draw covers seven classes at 44–56% and leaves five at 8–27%: hamburger,
+        login-social-bar, header, menu and dropdown-menu. Ours hides more than half of every class's patches. Measured
+        against random, random⁺ gains the same +1.5 on both groups; ours matches it on the well-covered classes (+1.6)
+        and gains +4.6 on the thinly covered ones, which account for the whole 1.3-point lead over random⁺. Per class,
+        the F1 gained follows the coverage added under ours (r = 0.72) and not under random⁺ (r = 0.05). It is not the
+        amount masked: ours hides 34% of the page against about 50% for a random draw, and raising ours to that budget,
+        by widening the band or adding blocks outside the components, moves validation macro F1 by at most 0.6
+        (Table 4 of the paper).
+      </p>
+      <p>
+        <b>Class-balanced loss.</b> The thinly covered classes also put the fewest patches into the loss, so we also
+        balance the loss: every class's masked patches carry the same total weight. Over random⁺, balancing alone
+        gains +2.0 macro F1 and our mask +1.3, but on different classes: ours leads on the five thinly covered (+3.2
+        against +1.8), balancing on the well covered (+2.1 against 0.0). Together they give the largest gain, +3.7
+        macro F1, best in nine of the twelve classes (Table 5 of the paper).
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Released encoders ===================== -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Released encoders</h2>
+    <div class="table-container">
+      <table class="table is-fullwidth is-striped results" style="background:transparent">
+        <thead>
+          <tr><th>Encoder</th><th>Hugging Face</th><th class="num">Seed-0 test macro F1 (%)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>SigLIP2 SO400M, frozen (starting point)</td><td><a href="https://huggingface.co/google/siglip2-so400m-patch16-naflex"><code>google/siglip2-so400m-patch16-naflex</code></a></td><td class="num">—</td></tr>
+          <tr><td>random masking</td><td><a href="https://huggingface.co/Wix/ui-encoder-random"><code>Wix/ui-encoder-random</code></a></td><td class="num">62.66</td></tr>
+          <tr><td>random⁺ masking</td><td><a href="https://huggingface.co/Wix/ui-encoder-random-plus"><code>Wix/ui-encoder-random-plus</code></a></td><td class="num">64.07</td></tr>
+          <tr><td>random⁺, class-balanced loss</td><td><a href="https://huggingface.co/Wix/ui-encoder-random-plus-bal"><code>Wix/ui-encoder-random-plus-bal</code></a></td><td class="num">66.63</td></tr>
+          <tr><td><b>ours</b> (component-conditioned)</td><td><a href="https://huggingface.co/Wix/ui-encoder-ours"><code>Wix/ui-encoder-ours</code></a></td><td class="num best">66.00</td></tr>
+          <tr><td>ours, class-balanced loss</td><td><a href="https://huggingface.co/Wix/ui-encoder-ours-bal"><code>Wix/ui-encoder-ours-bal</code></a></td><td class="num">68.13</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="content">
+      <p>
+        The seed-0 column gives the test macro F1 reported for each individual Wix checkpoint in its model card. The
+        paper reports averages over three pretraining seeds. The frozen SigLIP2 baseline uses the original Google
+        weights.
+      </p>
+    </div>
+
+    <details>
+      <summary>How the encoders were trained: every target block in one pass</summary>
+      <figure>
+        <img src="static/images/packed_predictor.png" alt="Packed predictor: one block at a time versus all blocks packed in one pass with a block-diagonal attention mask">
+      </figure>
+      <p class="caption">
+        <i>Left</i>: one block at a time, as I-JEPA does. The context C is copied and re-encoded on every pass, and
+        blocks are padded to the longest in the batch. <i>Middle, right</i>: all blocks are packed into one sequence,
+        and an attention mask lets each target block see C and itself but never another block. C is encoded once, the
+        padding goes, and cost follows the patch count rather than the block count. Code:
+        <code>components_masking/training/jepa/predictor.py</code>.
+      </p>
+      <p class="content">
+        Our mask gives one target block per component, fifteen on an average page and forty on a busy one. Predicting
+        them one at a time would copy the context forty times, so the predictor reconstructs all of them in one pass,
+        following CrossMAE's cross-attention decoding. The context attends only within itself, and each block attends to
+        the context and to its own queries. A block is predicted from the same context as before, and the predictor is
+        the same in every run, so the change cannot favour one mask over another.
+      </p>
+      <table class="table is-narrow is-fullwidth results mt-4" style="background:transparent">
+        <tbody>
+          <tr><td>Starting encoder</td><td>SigLIP2 SO400M, patch 16, NaFlex, ≤ 1,024 patches per page</td></tr>
+          <tr><td>Objective</td><td>I-JEPA latent prediction, smooth-L1 over the masked patches; target encoder a frozen copy of the starting weights</td></tr>
+          <tr><td>Predictor</td><td>6-layer ViT, width 384, 6 heads, randomly initialized; the context encoder's learning rate is zero for the first 500 steps</td></tr>
+          <tr><td>Data</td><td>118,583 training pages (the 125,277-page train split, keeping pages whose components cover ≥ 10% of the page), effective batch 64, 17,000 steps (≈ 9 epochs)</td></tr>
+          <tr><td>Optimizer</td><td>AdamW (β₁ = 0.9, β₂ = 0.999), weight decay 0.05, gradient clipping 1.0; cosine schedule, peak LR 5e-5 after a 1,000-step warm-up</td></tr>
+          <tr><td>random mask</td><td>4 target blocks per page, each 15–20% of it, aspect ratio 0.75–1.5, as in I-JEPA; the whole page is kept as context</td></tr>
+          <tr><td>random⁺ mask</td><td>16 target blocks per page, each 2–8% of it: a page carries 15.6 components on average, and 2–8% spans their typical sizes</td></tr>
+          <tr><td>Our mask</td><td>per component, a contiguous block along its longer axis, sized to a share drawn from (0.5, 0.7) of its patches; children are masked first and the parent's block goes around what they keep visible</td></tr>
+          <tr><td>Compute</td><td>about 4.4 hours per run on four L40S GPUs, no more than a random draw costs</td></tr>
+        </tbody>
+      </table>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== Using an encoder ===================== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Using an encoder</h2>
+<pre><code>from PIL import Image
+from transformers import AutoImageProcessor, Siglip2VisionModel
+
+repo = "Wix/ui-encoder-ours"
+processor = AutoImageProcessor.from_pretrained(repo, use_fast=False)  <span class="c"># Pillow resizing, as in the evaluation</span>
+model = Siglip2VisionModel.from_pretrained(repo).eval()
+
+inputs = processor(images=Image.open("page.png").convert("RGB"), return_tensors="pt")
+patch_features = model(**inputs).last_hidden_state      <span class="c"># (1, 1024, 1152)</span></code></pre>
+    <p class="content">
+      The encoder reads pixels only. Component boxes shaped the pretraining mask and are not needed at inference.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== Data ===================== -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">The data</h2>
+    <div class="columns">
+      <div class="column is-5">
+        <figure>
+          <img src="static/images/class_gallery.jpg" alt="Six example crops for each of the twelve component classes">
+        </figure>
+      </div>
+      <div class="column is-7 content">
+        <p>9,000 rendered homepages with every component's class and box, in two splits:</p>
+        <table class="table is-narrow is-fullwidth results" style="background:transparent">
+          <thead><tr><th>split</th><th class="num">pages</th><th class="num">components</th><th>role</th></tr></thead>
+          <tbody>
+            <tr><td><code>seed</code></td><td class="num">4,000</td><td class="num">62,837</td><td>fits the probe and selects its regularization</td></tr>
+            <tr><td><code>test</code></td><td class="num">5,000</td><td class="num">72,507</td><td>held-out evaluation, read once</td></tr>
+          </tbody>
+        </table>
+<pre><code>from datasets import load_dataset
+
+ds = load_dataset("Wix/ui-components")
+row = ds["seed"][0]
+row["image"]        <span class="c"># PIL image of the page</span>
+row["classes"]      <span class="c"># ["header", "menu", ...]</span>
+row["rectangles"]   <span class="c"># [[x_min, y_min, x_max, y_max], ...]</span></code></pre>
+        <p>Boxes are in image pixels with the origin at the top-left.</p>
+      </div>
+    </div>
+    <div class="content mt-4">
+      <p>
+        Each page is one site's homepage, rendered in a headless browser 1,280 pixels wide and cut at the section
+        boundary closest to 2,160 pixels. Screenshot heights therefore vary, and every recorded component appears in the
+        screenshot. A component is a page element that the platform stamps with its own class token
+        (<code>wixui-button</code>, <code>wixui-rich-text</code>, …). Seventeen tokens map to the twelve classes; the
+        other 168, mostly layout containers, are left unlabelled.
+      </p>
+      <table class="table is-narrow is-fullwidth results" style="background:transparent">
+        <thead><tr><th>class</th><th>platform tokens</th></tr></thead>
+        <tbody>
+          <tr><td><code>text</code></td><td><code>rich-text</code>, <code>collapsible-text</code></td></tr>
+          <tr><td><code>image</code></td><td><code>image</code>, <code>video-box</code>, <code>video-player</code></td></tr>
+          <tr><td><code>menu</code></td><td><code>horizontal-menu</code>, <code>vertical-menu</code></td></tr>
+          <tr><td><code>input-field</code></td><td><code>text-input</code>, <code>search-bar</code></td></tr>
+          <tr><td><code>hamburger</code></td><td><code>hamburger-open-button</code></td></tr>
+        </tbody>
+      </table>
+      <p>
+        The other seven classes (<code>button</code>, <code>vector-image</code>, <code>header</code>,
+        <code>repeater</code>, <code>dropdown-menu</code>, <code>login-social-bar</code>, <code>text-marquee</code>)
+        each come from the token of the same name.
+      </p>
+      <p>
+        The 136,277 pages split into train (125,277), seed (4,000), validation (2,000) and test (5,000), each page in
+        exactly one. Seed and test are released.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Reproduce ===================== -->
+<section class="section">
+  <div class="container is-max-desktop content">
+    <h2 class="title is-3 has-text-centered">Evaluating the released encoders</h2>
+    <p>
+      Requirements: Python 3.12 and a CUDA GPU (the reported runs used 4× NVIDIA L40S). The script downloads the
+      weights and evaluation dataset, runs the linear probe on all six encoders, and prints per-class F1 and test
+      macro F1, with each Wix checkpoint's Hugging Face seed-0 score and the signed gap in F1 points. The paper
+      reports averages across three pretraining seeds.
+    </p>
+<pre><code>pip install -r requirements.txt
+bash reproduce/reproduce.sh /path/to/workdir            <span class="c"># 4 GPUs: 0,1,2,3</span>
+MODELS_PER_PASS=1 BATCH_SIZE=8 WORKERS=8 \
+  bash reproduce/reproduce.sh /path/to/workdir 0,0,0,0  <span class="c"># 1 GPU</span></code></pre>
+    <p>
+      <b>Protocol.</b> Each page is encoded unmasked at ≤ 1,024 patches; a component's feature is the mean of the
+      patches its box touches. A <code>StandardScaler</code> → <code>LogisticRegression</code> probe is fitted on up to
+      1,000 components per class from <code>seed</code>, with <code>C</code> chosen by 3-fold page-grouped
+      cross-validation, and scored once on all 72,507 <code>test</code> components (macro F1 over 12 classes).
+      The full protocol and reproduction notes are in the
+      <a href="https://github.com/wix-incubator/UI-encoder">code repository</a>.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== Limitations ===================== -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop content">
+    <h2 class="title is-3 has-text-centered">Limitations</h2>
+    <ul>
+      <li>The mask and the evaluation use the same twelve classes, which cover 51% of the component instances a page
+        carries. Everything outside them is treated as non-component area.</li>
+      <li>At patch resolution, a component may contribute no target patches. For example, a one-patch component has no
+        room for both a target and visible context. When the sampler finds no component target blocks on a page, it
+        falls back to a random block.</li>
+      <li>All pages come from one platform, and all runs use one backbone and one objective. With no downstream task or
+        external dataset, whether the gain transfers beyond this probe is untested.</li>
+      <li>Both baselines are random draws. The gain correlates with coverage, and masking non-component area adds
+        nothing; other factors (blocks shaped to each component, never hiding a component whole) remain to be
+        measured.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== BibTeX ===================== -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title is-3">BibTeX</h2>
+<pre><code><span class="c">% Citation metadata will be added with the camera-ready version.</span></code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container is-max-desktop has-text-centered">
+    <p>
+      The code is licensed under <a href="https://github.com/wix-incubator/UI-encoder/blob/main/LICENSE">Creative
+      Commons Attribution-NonCommercial 4.0 International</a>. The Hugging Face cards describe the terms for the
+      dataset and checkpoints.
+    </p>
+    <p>
+      This page is built on the <a href="https://github.com/nerfies/nerfies.github.io">Nerfies project page template</a>,
+      licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+# Python 3.12. Pillow is updated from the original probe environment for security.
+torch==2.11.0
+transformers==5.3.0
+numpy==2.4.3
+pandas==3.0.1
+pyarrow==23.0.1
+scikit-learn==1.8.0
+threadpoolctl==3.8.0
+pillow==13.0.0
+tqdm==4.67.3
+joblib==1.5.3
+# Release tooling for downloads and dataset caching (versions of the verification environment).
+datasets==5.0.1
+huggingface_hub==1.33.0
+filelock==4.3.1
